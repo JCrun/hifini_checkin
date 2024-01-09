@@ -101,18 +101,25 @@ def qiandao(ck):
     # response.text = {
     #     "code": "0",
     #     "message": "成功签到！今日排名20328，总奖励1金币！"
-    # }r
+    # }
+    # {
+    #     "code": "-1",
+    #     "message": "今天已经签过啦！"
+    # }
     isnull=True
     if response.text.find('成功签到')!=-1:
         isnull=False
         printf('【签到成功】'+response.text)
+    elif response.text.find('今天已经签过啦')!=-1:
+        isnull=False
+        printf('【签到失败】'+response.text)
     else:
         printf('【签到失败】'+response.text)
     if send:
         if isnull:
-            send('【hifini签到】','【签到失败】'+response.text)
+            return 0
         else:
-            send('【hifini签到】','【签到成功】'+response.text)
+            return 1
 
 def get_coin_num():
     url='https://www.hifini.com/my.htm'
@@ -158,14 +165,18 @@ if __name__ == '__main__':
             ck += ';'
 
         UserAgent=randomuserAgent()
-        qiandao(ck)
+        ischeckin = qiandao(ck)
         time.sleep(5)
         coin_num = get_coin_num()
         printf('【金币数量】'+coin_num)
-        if send:
-            send('【hifini签到】','【金币数量】'+coin_num)
+        if ischeckin:
+            printf('【签到成功】')
+            if send:
+                send('【hifini签到】','【签到成功】\n\n【金币数量】%s\n\n【签到结束】' % coin_num)
+        else:
+            printf('【签到失败】')
+            if send:
+                send('【hifini签到】','【签到失败】\n\n【金币数量】%s\n\n【签到结束】' % coin_num)
         time.sleep(5)
     printf('【签到结束】')
-    if send:
-        send('【hifini签到】','【签到结束】')
     sys.exit(0)
