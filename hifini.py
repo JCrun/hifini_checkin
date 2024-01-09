@@ -2,7 +2,7 @@
 cron: 0 9 * * *
 new Env('hifini签到');
 """
-import lxml
+from lxml import etree
 import requests
 import json
 import time
@@ -136,7 +136,7 @@ def get_coin_num():
     }
     response = requests.post(url=url, headers=headers)
     text = response.text
-    pattern = lxml.etree.HTML(text)
+    pattern = etree.HTML(text)
     coin_num = pattern.xpath('//span[@class="text-muted"]/em/text()')[0]
     return coin_num
 
